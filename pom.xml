@@ -46,6 +46,7 @@
         <scala.minor.version>2.13</scala.minor.version>
         <scala.version>${scala.minor.version}.18</scala.version>
         <scalatest.version>3.2.20</scalatest.version>
+        <scalatestplus.version>${scalatest.version}.0</scalatestplus.version>
     </properties>
 
     <repositories>
@@ -221,6 +222,19 @@
                     <groupId>org.scalactic</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatestplus</groupId>
+            <artifactId>scalacheck-1-19_${scala.minor.version}</artifactId>
+            <version>${scalatestplus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.smartdatalake</groupId>
+            <artifactId>sdl-core_${scala.minor.version}</artifactId>
+            <version>2.9.0</version>
+            <classifier>test-jar</classifier>
+            <scope>test</scope>
+            <type>test-jar</type>
         </dependency>
     </dependencies>
 

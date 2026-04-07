@@ -1,14 +1,18 @@
-package datamig.quality
+package datamig
 
-import datamig.{reasonCol, reasonColName, srcColMap, DsError, SrcCol}
 import io.smartdatalake.util.spark.dataset
 import io.smartdatalake.util.LogUtils.debugLog
 import java.lang.Character.isDigit
-import org.apache.spark.sql.{Column, DataFrame, SparkSession}
-import org.apache.spark.sql.functions.{col, lit, not, udf}
+import org.apache.spark.sql.{Column, DataFrame, Dataset, SparkSession}
+import org.apache.spark.sql.functions.{
+  array_sort, col, collect_set, concat_ws, lit, not, reduce, regexp_replace, udf
+}
 import org.slf4j.Logger
 
-object Quality extends dataset.Quality {
+package object quality extends dataset.Quality {
+
+  val reasonColName: String = "reason"
+  val reasonCol: Column     = col(reasonColName)
 
   /** @param strOpt
     *   optional string to test
@@ -190,6 +194,27 @@ object Quality extends dataset.Quality {
     dfInvalid.createdLog("dfInvalid")
     debugLog(s"getInvalidWithReason($dataObject): ${dfInvalid.count()} invalid records found")
     dfInvalid
+  }
+
+  implicit class DsError[T](ds: Dataset[T]) extends Serializable {
+
+    lazy val aggregateReasonCol: DataFrame =
+      if (ds.columns.contains(reasonColName)) {
+        val grpByCols = ds.columns.diff(Array(reasonColName)).map(col)
+        ds.groupBy(grpByCols: _*).agg(expr = array_sort(collect_set(reasonCol)).as(reasonColName))
+          .select(
+            grpByCols :+ regexp_replace(
+              e = reduce(
+                expr = reasonCol,
+                initialValue = lit(""),
+                merge = (acc, x) => concat_ws(" ; ", acc, x)
+              ),
+              pattern = "^ ; ",
+              replacement = ""
+            ).as(reasonColName): _*
+          )
+      } else ds.asInstanceOf[DataFrame]
+
   }
 
 }

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="run_action" type="Application" factoryName="Application">
+  <configuration default="false" name="check_data" type="Application" factoryName="Application">
     <option name="ALTERNATIVE_JRE_PATH" value="21" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <envs>
@@ -17,7 +17,7 @@
     <output_file path="run_action.log" is_save="true" />
     <option name="MAIN_CLASS_NAME" value="io.smartdatalake.app.SparkSmartDataLakeBuilder" />
     <module name="datamig" />
-    <option name="PROGRAM_PARAMETERS" value="-c $ProjectFileDir$/config --feed-sel ids:load_cities --master local[*]" />
+    <option name="PROGRAM_PARAMETERS" value="-c $ProjectFileDir$/config --feed-sel check_data --master local[*]" />
     <shortenClasspath name="ARGS_FILE" />
     <option name="VM_PARAMETERS" value="--add-opens=java.base/sun.nio.ch=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.lang.invoke=ALL-UNNAMED --add-opens=java.base/java.lang.reflect=ALL-UNNAMED --add-opens=java.base/java.io=ALL-UNNAMED --add-opens=java.base/java.net=ALL-UNNAMED --add-opens=java.base/java.nio=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED --add-opens=java.base/java.util.concurrent=ALL-UNNAMED --add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED --add-opens=java.base/jdk.internal.ref=ALL-UNNAMED --add-opens=java.base/sun.nio.cs=ALL-UNNAMED --add-opens=java.base/sun.security.action=ALL-UNNAMED --add-opens=java.base/sun.util.calendar=ALL-UNNAMED -Dlog4j.configurationFile=config/log4j2.yml -Xmx12g" />
     <extension name="software.aws.toolkits.jetbrains.core.execution.JavaAwsConnectionExtension">
