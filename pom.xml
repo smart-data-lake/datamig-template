@@ -1,0 +1,227 @@
+<!--
+  ~ Smart Data Lake Examples - Build your data lake the smart way.
+  ~
+  ~ Copyright © 2019 ELCA Informatique SA (<https://www.elca.ch>)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!--
+      By setting sdl-parent as parent you get proper dependency management for Spark and predefined plugin management
+      Alternatively you could import Spark dependency management from sdl-parent with scope=import (or also directly from spark-parent),
+      and need to copy all version properties from sdl-parent.pom into this pom.
+    -->
+    <parent>
+        <groupId>io.smartdatalake</groupId>
+        <artifactId>sdl-parent</artifactId>
+        <!--
+          Set the smartdatalake version to use here.
+          If version cannot be resolved, make sure maven central repository is defined in settings.xml and the corresponding profile activated.
+        -->
+        <version>2.9.0</version>
+    </parent>
+
+    <artifactId>datamig</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>Data Migration</name>
+
+    <properties>
+        <postgre.jdbc.driver.version>42.7.10</postgre.jdbc.driver.version>
+        <!-- default scala version - use predefined maven profiles to override -->
+        <scala.minor.version>2.13</scala.minor.version>
+        <scala.version>${scala.minor.version}.18</scala.version>
+        <scalatest.version>3.2.20</scalatest.version>
+    </properties>
+
+    <repositories>
+        <!-- smartdatalake snapshots -->
+        <repository>
+            <id>ossrh</id>
+            <name>ossrh snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <build>
+        <outputDirectory>target/classes</outputDirectory>
+        <sourceDirectory>src/main/scala</sourceDirectory>
+        <plugins>
+            <!-- Compiles Scala sources. -->
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>4.9.10</version>
+                <configuration>
+                    <compilerPlugins>
+                        <compilerPlugin>
+                            <groupId>org.scalameta</groupId>
+                            <artifactId>semanticdb-scalac_${scala.version}</artifactId>
+                            <version>4.15.2</version>
+                        </compilerPlugin>
+                    </compilerPlugins>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                        <configuration>
+                            <args>
+                                <arg>-Yrangepos</arg>
+                                <arg>-P:semanticdb:sourceroot:${project.basedir}</arg>
+                                <arg>-P:semanticdb:targetroot:${project.build.directory}/classes</arg>
+                            </args>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Copies files in resources folders to target folder. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.5.0</version>
+            </plugin>
+
+            <!-- Creates the jar without dependencies -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>io.smartdatalake.app.LocalSmartDataLakeBuilder</mainClass>
+                        </manifest>
+                        <manifestEntries>
+                            <Implementation-Version>${project.version}</Implementation-Version>
+                        </manifestEntries>
+                    </archive>
+                    <excludes>
+                        <exclude>log4j.properties</exclude> <!-- Logging configuration should be left to user. -->
+                        <exclude>${project.artifactId}*.jar
+                        </exclude> <!-- avoid "Error assembling JAR" because of already existing artifact jar -->
+                        <exclude>*.conf
+                        </exclude> <!-- no SDL configuration files - they must be provided by the user separately -->
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- check for dependency version conflicts -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.6.2</version>
+            </plugin>
+
+            <!-- Scalafmt: https://github.com/SimonJPegg/mvn_scalafmt-->
+            <plugin>
+                <groupId>org.antipathy</groupId>
+                <artifactId>mvn-scalafmt_${scala.minor.version}</artifactId>
+                <version>1.1.1713302731.c3d0074</version>
+                <configuration>
+                    <configLocation>${project.basedir}/.scalafmt.conf</configLocation> <!-- path to config -->
+                    <skipTestSources>false</skipTestSources> <!-- (Optional) skip formatting test sources -->
+                    <skipSources>false</skipSources> <!-- (Optional) skip formatting main sources -->
+                    <sourceDirectories> <!-- (Optional) Paths to source-directories. Overrides ${project.build.sourceDirectory} -->
+                        <param>${project.basedir}/src/main/scala</param>
+                    </sourceDirectories>
+                    <testSourceDirectories> <!-- (Optional) Paths to test-source-directories. Overrides ${project.build.testSourceDirectory} -->
+                        <param>${project.basedir}/src/test/scala</param>
+                    </testSourceDirectories>
+                    <validateOnly>false</validateOnly> <!-- check formatting without changing files -->
+                    <onlyChangedFiles>false
+                    </onlyChangedFiles> <!-- only format (staged) files that have been changed from the specified git branch -->
+                    <showReformattedOnly>false</showReformattedOnly> <!-- log only modified files -->
+                    <!-- The git branch to check against
+                    If branch.startsWith(": ") the value in <branch> tag is used as a command to run
+                    and the output will be used as the actual branch-->
+                    <branch>: git rev-parse &#45;&#45;abbrev-ref HEAD</branch> <!-- the current branch-->
+                    <!-- <branch>master</branch>-->
+                    <useSpecifiedRepositories>false
+                    </useSpecifiedRepositories> <!-- use project repositories configuration for scalafmt dynamic loading -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>scalafmt</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>format</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>io.smartdatalake</groupId>
+            <artifactId>sdl-core_${scala.minor.version}</artifactId>
+            <version>${project.parent.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spark-avro_2.13</artifactId>
+                    <groupId>org.apache.spark</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spark-excel_2.13</artifactId>
+                    <groupId>com.crealytics</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgre.jdbc.driver.version}</version>
+        </dependency>
+
+        <!-- TEST dependencies -->
+        <!-- https://mvnrepository.com/artifact/org.scalatest/scalatest -->
+        <dependency>
+            <groupId>org.scalactic</groupId>
+            <artifactId>scalactic_${scala.minor.version}</artifactId>
+            <version>${scalatest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scalatest</groupId>
+            <artifactId>scalatest_${scala.minor.version}</artifactId>
+            <version>${scalatest.version}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>scalactic_2.13</artifactId>
+                    <groupId>org.scalactic</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+
+</project>
