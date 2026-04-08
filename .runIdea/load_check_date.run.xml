@@ -14,7 +14,7 @@
       <env name="TARGET_PW" value="sdlb" />
       <env name="TARGET_USER" value="sdlb" />
     </envs>
-    <output_file path="run_action.log" is_save="true" />
+    <output_file path="load_check_date.log" is_save="true" />
     <option name="MAIN_CLASS_NAME" value="io.smartdatalake.app.SparkSmartDataLakeBuilder" />
     <module name="datamig" />
     <option name="PROGRAM_PARAMETERS" value="-c $ProjectFileDir$/config --feed-sel .*_data --master local[*]" />
