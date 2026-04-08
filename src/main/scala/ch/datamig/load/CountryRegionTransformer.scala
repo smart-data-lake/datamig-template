@@ -1,6 +1,6 @@
-package datamig.load
+package ch.datamig.load
 
-import datamig.quality.getData
+import ch.datamig.quality.getData
 import io.smartdatalake.util.misc.SmartDataLakeLogger
 import io.smartdatalake.util.spark.dataset
 import io.smartdatalake.util.spark.GetSession.loggEnv

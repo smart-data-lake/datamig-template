@@ -1,9 +1,12 @@
-import datamig.quality.strNotTooLongQC
-import org.apache.spark.sql.{Column, DataFrame, Dataset}
+package ch
+
+import ch.datamig.quality.strNotTooLongQC
 import org.apache.spark.sql.expressions.Window
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types.{FloatType, IntegerType, LongType}
-package object datamig extends Serializable {
+import org.apache.spark.sql.Column
+
+package object datamig {
 
   def shortenString(length: Int)(c: Column): Column =
     substr(str = c, pos = lit(1), len = lit(length))

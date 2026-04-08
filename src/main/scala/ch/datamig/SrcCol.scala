@@ -1,6 +1,6 @@
-package datamig
+package ch.datamig
 
-import datamig.quality.QualityCheck
+import ch.datamig.quality.QualityCheck
 import org.apache.spark.sql.types.{DataType, StringType}
 import org.apache.spark.sql.Column
 

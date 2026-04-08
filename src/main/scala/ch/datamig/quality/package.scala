@@ -1,12 +1,10 @@
-package datamig
+package ch.datamig
 
 import io.smartdatalake.util.spark.dataset
 import io.smartdatalake.util.LogUtils.debugLog
 import java.lang.Character.isDigit
 import org.apache.spark.sql.{Column, DataFrame, Dataset, SparkSession}
-import org.apache.spark.sql.functions.{
-  array_sort, col, collect_set, concat_ws, lit, not, reduce, regexp_replace, udf
-}
+import org.apache.spark.sql.functions._
 import org.slf4j.Logger
 
 package object quality extends dataset.Quality {

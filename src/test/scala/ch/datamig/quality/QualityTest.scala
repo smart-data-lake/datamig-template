@@ -1,19 +1,21 @@
-package datamig.quality
+package ch.datamig.quality
 
-import datamig.{SrcCol, TestTrait}
+import ch.datamig.SrcCol
 import io.smartdatalake.testutils.TestTool
 import io.smartdatalake.util.spark.GetSession.createSparkSession
 import org.apache.spark.sql.types.LongType
 import org.apache.spark.sql.SparkSession
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 import org.slf4j.{Logger, LoggerFactory}
-
-class QualityTest extends TestTrait with TestTool {
+class QualityTest extends AnyFlatSpec with Matchers with TestTool {
   private implicit val logger: Logger          = LoggerFactory.getLogger(getClass.getName)
   private implicit val sparkImpl: SparkSession = createSparkSession()
 
   import sparkImpl.implicits._
 
-  private val myDf      = myData.toDF("id", "text")
+  private val myDf      = List((0, None), (1, Some("a")), (2, Some("ab")), (3, Some("abc")))
+    .toDF("id", "text")
   private val mySrcCols = List(
     SrcCol(name = "id", newName = "id", newType = LongType),
     SrcCol(name = "text", newName = "text", qualityCheck = Some(strNotTooLongQC(maxLength = 2)))

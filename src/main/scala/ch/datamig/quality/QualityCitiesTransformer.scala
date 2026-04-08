@@ -1,11 +1,11 @@
-package datamig.quality
+package ch.datamig.quality
 
 import io.smartdatalake.util.misc.SmartDataLakeLogger
 import io.smartdatalake.util.spark.dataset
 import io.smartdatalake.util.spark.GetSession.loggEnv
 import io.smartdatalake.workflow.action.spark.customlogic.CustomDfsTransformer
 import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.apache.spark.sql.functions.{expr, lit}
+import org.apache.spark.sql.functions.lit
 import org.slf4j.Logger
 
 class QualityCitiesTransformer

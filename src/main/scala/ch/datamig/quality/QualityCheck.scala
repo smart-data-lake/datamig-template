@@ -1,4 +1,4 @@
-package datamig.quality
+package ch.datamig.quality
 
 import org.apache.spark.sql.Column
 
