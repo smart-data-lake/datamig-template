@@ -1,6 +1,9 @@
 SHOW search_path;
-DROP VIEW IF EXISTS table_size ;
+DROP VIEW IF EXISTS data_objects ;
 DROP VIEW IF EXISTS index_size ;
+DROP VIEW IF EXISTS table_size ;
+DROP FUNCTION if EXISTS get_data_object;
+DROP FUNCTION if EXISTS get_data_objects;
 DROP FUNCTION IF EXISTS object_size ;
 
 
@@ -119,6 +122,70 @@ SELECT scheme, object_name AS table_name,
  toast_bytes,
  toast_size
 FROM object_size('{r,p}'::character(1)[]) object_size(scheme, object_name, row_estimate, total_bytes, total_size, object_bytes, object_size, index_bytes, index_size, toast_bytes, toast_size)
+;
+
+CREATE OR REPLACE FUNCTION get_data_object
+(tabSchema name, tabName name, pkName name = null, pkCols text[] = '{}', minSchema text[] = '{}', connectionId text = '<connectionId>')
+  RETURNS text
+  LANGUAGE plpgsql
+  IMMUTABLE
+AS $function$
+  DECLARE
+      schemeMin constant text = case cardinality(minSchema)
+                                when 0 then ''
+                                else chr(13)||'  schemaMin = "'||array_to_string (minSchema,', ')||'"'
+                                end ;
+  BEGIN
+    return tabSchema||'_'||tabname||' {
+  type = JdbcTableDataObject
+  connectionId = '||connectionId||'
+  table {
+    name = '||tabSchema||'.'||tabname||'
+    primaryKey = ['||array_to_string(pkCols,',')||']
+  }'||schemeMin||'
+}' ;
+  END;
+$function$
+;
+
+--create view data_objects as
+CREATE OR REPLACE FUNCTION get_data_objects(schemaName name)
+  RETURNS TABLE (table_schema name, table_name name, min_schema text[], pk_cols text[], data_object text)
+  LANGUAGE sql
+AS $function$
+with pk as
+(select table_schema, table_name, constraint_name
+ from   information_schema.table_constraints
+ where  constraint_type = 'PRIMARY KEY'
+   and  table_schema = schemaName
+)
+,allCols as
+(select col.table_schema, col.table_name, concol.column_name pk_col
+       ,min(case when concol.column_name is null then null else col.ordinal_position end) over
+          (PARTITION BY col.table_schema, col.table_name, concol.column_name) pk_pos
+       ,col.ordinal_position, col.column_name, col.data_type
+ from   information_schema.columns col
+ left join pk
+        on col.table_schema = pk.table_schema
+       and col.table_name = pk.table_name
+ left join information_schema.constraint_column_usage concol
+        on col.table_schema = concol.table_schema
+       and col.table_name = concol.table_name
+       and col.column_name = concol.column_name
+       and pk.constraint_name = concol.constraint_name
+ where col.table_schema = schemaName
+)
+select table_schema, table_name
+      ,array_agg(column_name||' '||data_type order by ordinal_position) min_schema
+      ,array_remove(array_agg(pk_col order by pk_pos),null) pk_cols
+      ,get_data_object(tabSchema=>table_schema,
+                       tabName=>table_name,
+                       pkCols=>array_remove(array_agg(pk_col order by pk_pos),null),
+                       minSchema=>array_agg(column_name||' '||data_type order by ordinal_position)
+                      ) data_object
+from   allCols
+group by table_schema, table_name
+$function$
 ;
 
 grant create on database sdlb to sdlb ;
