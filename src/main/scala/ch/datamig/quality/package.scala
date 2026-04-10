@@ -118,7 +118,9 @@ package object quality extends dataset.Quality {
         )
         debugLog(s"$logPrefix original df.count = ${df.count()}")
         df.where(qualityFilter).select(srcCols.map { sc =>
-          sc.transformation(col(sc.name)).cast(sc.newType).as(sc.newName)
+          sc.newType.foldLeft[Column](sc.transformation(col(sc.name))) { case (col, typ) =>
+            col.cast(typ)
+          }.as(sc.newName.getOrElse(sc.name))
         }: _*)
       case _          =>
         debugLog(

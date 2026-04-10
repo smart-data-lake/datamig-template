@@ -17,8 +17,8 @@ class QualityTest extends AnyFlatSpec with Matchers with TestTool {
   private val myDf      = List((0, None), (1, Some("a")), (2, Some("ab")), (3, Some("abc")))
     .toDF("id", "text")
   private val mySrcCols = List(
-    SrcCol(name = "id", newName = "id", newType = LongType),
-    SrcCol(name = "text", newName = "text", qualityCheck = Some(strNotTooLongQC(maxLength = 2)))
+    SrcCol(name = "id", newType = Some(LongType)),
+    SrcCol(name = "text", qualityCheck = Some(strNotTooLongQC(maxLength = 2)))
   )
 
   "strIsNat" should "check whether a string can be converted to a natural number" in {

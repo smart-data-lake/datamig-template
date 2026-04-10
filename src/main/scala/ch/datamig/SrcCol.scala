@@ -15,8 +15,8 @@ import org.apache.spark.sql.Column
   */
 case class SrcCol(
     name: String,
-    newName: String,
-    newType: DataType = StringType,
+    newName: Option[String] = None,
+    newType: Option[DataType] = None,
     transformation: Column => Column = identity,
     qualityCheck: Option[String => QualityCheck] = None
 ) {
