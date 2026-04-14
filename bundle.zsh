@@ -2,11 +2,7 @@
 SCRIPTCALL=$0
 WORKDIR=${SCRIPTCALL:h}
 CONFIGDIR="${WORKDIR}/config"
-JARNAME="datamig-0.0.1"
-
-echo "WORKDIR   = ${WORKDIR}"
-echo "CONFIGDIR = ${CONFIGDIR}"
-echo "JARNAME   = ${JARNAME}"
+JARNAME="datamig"
 
 echo "Removing old left over"
 rm -v ${WORKDIR}/dependency-reduced-pom.xml
@@ -16,7 +12,12 @@ rm -v ${WORKDIR}/*.tar*
 rm -r ${WORKDIR}/target
 
 mvn clean install --no-transfer-progress --update-snapshots --activate-profiles fat-jar-with-spark,scala-2.13
-cp -rv ${WORKDIR}/src/main/sql ${WORKDIR}/target/${JARNAME}-*-jar-with-dependencies.jar ${WORKDIR}
+
+echo "WORKDIR   = ${WORKDIR}"
+echo "CONFIGDIR = ${CONFIGDIR}"
+echo "JARNAME   = ${JARNAME}"
+
+cp -rv ${WORKDIR}/src/main/sql ${WORKDIR}/target/*-jar-with-dependencies.jar ${WORKDIR}
 cp -v ${WORKDIR}/src/main/shell/* ${WORKDIR}
 chmod -v 0750 ${WORKDIR}/*sh
 
