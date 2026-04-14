@@ -24,7 +24,8 @@ class QualityCitiesTransformer
     loggEnv
 
     val dfRegionNotFound = getData(dataObject = "datamig_src_cities", validOpt = None).join(
-      getData(dataObject = "datamig_tgt_region").withColumnRenamed(existingName = "iso_3166_1", newName = "iso2"),
+      getData(dataObject = "datamig_tgt_region")
+        .withColumnRenamed(existingName = "iso_3166_1", newName = "iso2"),
       List("iso2", "region_name"),
       "left_anti"
     ).withColumn(reasonColName, lit("region not found in look-up-table datamig_tgt_region"))

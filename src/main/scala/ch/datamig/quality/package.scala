@@ -109,8 +109,8 @@ package object quality extends dataset.Quality {
 
     validOpt match {
       case None       =>
-        debugLog(s"$logPrefix returning all rows, but just columns as keys in srcColMap")
-        df.select(srcCols.map { sc => col(sc.name) }: _*)
+        debugLog(s"$logPrefix returning all rows and all columns")
+        df
       case Some(true) =>
         debugLog(
           s"$logPrefix returning valid rows only" +
@@ -124,14 +124,15 @@ package object quality extends dataset.Quality {
         }: _*)
       case _          =>
         debugLog(
-          s"$logPrefix returning invalid rows only, adding column $reasonCol to indicate reason for invalidity"
+          s"$logPrefix returning invalid rows only with all columns," +
+            s" adding column $reasonCol to indicate reason for invalidity"
         )
         debugLog(s"$logPrefix original df.count = ${df.count()}")
         qualityChecks.foldLeft(df.withColumn(reasonColName, lit("")).where(lit(false))) {
           // qc._1: boolean valued column containing test criterium , qc._2: violation message
           case (accDf, qc: (Column, Column)) => accDf
               .union(df.where(not(qc._1)).withColumn(reasonColName, lit(qc._2)))
-        }.select(srcCols.map { sc => col(sc.name) } :+ reasonCol: _*)
+        }
     }
 
   }

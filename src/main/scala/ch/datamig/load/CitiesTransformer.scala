@@ -24,7 +24,8 @@ class CitiesTransformer
     loggEnv
 
     val dfCities = getData(dataObject = "datamig_src_cities")
-      .join(getData(dataObject = "datamig_tgt_region"), List("iso_3166_1", "region_name"), "inner").select(
+      .join(getData(dataObject = "datamig_tgt_region"), List("iso_3166_1", "region_name"), "inner")
+      .select(
         generatePKcol(orderColNames = List("iso_3166_1", "iso_3166_2", "city_name")),
         $"city_name",
         $"city_ascii",
