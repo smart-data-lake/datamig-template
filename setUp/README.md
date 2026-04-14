@@ -4,23 +4,23 @@
 This folder contains SQL scripts to create two small PostGres schemata `datamig_src` and `datamig_tgt`
 which contain the needed data objects for this data migration template.
 
-### Prerequisites
+The following commands assume that you wish to create the source and target schemata in a database called `sdlb`
+which the user `sdlb` possesses the necessary privileges to create tables and other data objects.
+You may change the name of the database and the user by modifying the scripts and commands commands below.
+For this end you are reffered to the official Postgres documentation
+on how to create databases and users and how to grant privileges:
+https://www.postgresql.org/docs/current/tutorial-createdb.html
 
-1) A Postgres DB named `sdlb` where the two schemata will be created
-2) A Postgres User named `sdlb`
-   who will own the data objects and who will run the SDLB
-
-You may change the name of the DB and the SDLB user by modifying the script `postgreSetup.sql`.
-
-### Grant create to DB user
-Run as superuser, e.g. as `postgres`, the schript `postgreSetup.sql`:
 ```
-psql --echo-queries --dbname=sdlb --username=postgres --file=postgreSetup.sql
-```
-
-### Create the source and target schemata
-Run as SDLB user, e.g. as `sdlb`, the schema creation schripts:
-```
+psql --dbname=postgres --username=postgres --command="create database sdlb"
+psql --dbname=sdlb --username=postgres --command="create user sdlb with password 'sdlb'; grant create on database sdlb to sdlb ;"
 psql --dbname=sdlb --username=sdlb --file=datamig_src.sql
 psql --dbname=sdlb --username=sdlb --file=datamig_tgt.sql
+psql --dbname=sdlb --username=postgres --command="vacuum analyze"
+```
+### Additional Gadgets
+The script `postgreAdditional.sql` contains statements to create function and views in schema `public` to monitor the size of database objects
+and a function to generate data objects for the Smart Datalake Builder which we will follow up soon.
+```
+psql --dbname=sdlb --username=postgres --file=postgreAdditional.sql
 ```

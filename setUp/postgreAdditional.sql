@@ -1,4 +1,3 @@
-SHOW search_path;
 DROP VIEW IF EXISTS data_objects ;
 DROP VIEW IF EXISTS index_size ;
 DROP VIEW IF EXISTS table_size ;
@@ -188,6 +187,5 @@ group by table_schema, table_name
 $function$
 ;
 
-grant create on database sdlb to sdlb ;
 grant select on index_size to sdlb ;
 grant select on table_size to sdlb ;
