@@ -12,7 +12,7 @@ package object datamig {
     substr(str = c, pos = lit(1), len = lit(length))
 
   val srcColMap: Map[String, List[SrcCol]] = Map(
-    "src_cities"         -> List(
+    "datamig_src_cities"         -> List(
       SrcCol(
         name = "city",
         newName = Some("city_name"),
@@ -31,13 +31,13 @@ package object datamig {
       SrcCol(name = "population"),
       SrcCol(name = "id")
     ),
-    "src_country_region" -> List(
+    "datamig_src_country_region" -> List(
       SrcCol(name = "iso_3166_1"),
       SrcCol(name = "country_name"),
       SrcCol(name = "iso_3166_2"),
       SrcCol(name = "region_name")
     ),
-    "tgt_region"         ->
+    "datamig_tgt_region"         ->
       List(SrcCol(name = "iso_3166_1"), SrcCol(name = "iso_3166_2"), SrcCol(name = "region_name"))
   )
 

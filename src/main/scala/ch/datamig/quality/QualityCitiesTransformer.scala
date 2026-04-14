@@ -23,14 +23,14 @@ class QualityCitiesTransformer
     logger.info(s"*** Start QualityCitiesTransformer ***")
     loggEnv
 
-    val dfRegionNotFound = getData(dataObject = "src_cities", validOpt = None).join(
-      getData(dataObject = "tgt_region").withColumnRenamed("iso_3166_1", "iso2"),
+    val dfRegionNotFound = getData(dataObject = "datamig_src_cities", validOpt = None).join(
+      getData(dataObject = "datamig_tgt_region").withColumnRenamed(existingName = "iso_3166_1", newName = "iso2"),
       List("iso2", "region_name"),
       "left_anti"
-    ).withColumn(reasonColName, lit("region not found in look-up-table tgt_region"))
+    ).withColumn(reasonColName, lit("region not found in look-up-table datamig_tgt_region"))
     dfRegionNotFound.createdLog("dfRegionNotFound")
 
-    val dfCitiesError = getInvalidWithReason(dataObject = "src_cities")
+    val dfCitiesError = getInvalidWithReason(dataObject = "datamig_src_cities")
       .unionByName(other = dfRegionNotFound, allowMissingColumns = false)
     dfCitiesError.createdLog("dfCitiesError")
     logger.info(s"dfCitiesError.count = ${dfCitiesError.count()}")

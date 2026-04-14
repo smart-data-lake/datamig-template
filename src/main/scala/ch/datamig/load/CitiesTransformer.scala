@@ -23,8 +23,8 @@ class CitiesTransformer
     logger.info(s"*** Start CitiesTransformer")
     loggEnv
 
-    val dfCities = getData(dataObject = "src_cities")
-      .join(getData(dataObject = "tgt_region"), List("iso_3166_1", "region_name"), "inner").select(
+    val dfCities = getData(dataObject = "datamig_src_cities")
+      .join(getData(dataObject = "datamig_tgt_region"), List("iso_3166_1", "region_name"), "inner").select(
         generatePKcol(orderColNames = List("iso_3166_1", "iso_3166_2", "city_name")),
         $"city_name",
         $"city_ascii",
@@ -36,6 +36,6 @@ class CitiesTransformer
       )
     dfCities.createdLog(dsName = "dfCities")
 
-    Map("tgt_cities" -> dfCities)
+    Map("datamig_tgt_cities" -> dfCities)
   }
 }

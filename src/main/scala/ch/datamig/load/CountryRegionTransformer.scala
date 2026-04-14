@@ -25,7 +25,7 @@ class CountryRegionTransformer
     logger.info(s"*** Start CountryRegionTransformer : countryFilter = $countryFilter")
     loggEnv
 
-    val dfCountryRegion = getData(dataObject = "src_country_region", filter = countryFilter)
+    val dfCountryRegion = getData(dataObject = "datamig_src_country_region", filter = countryFilter)
 
     val dfCountry = dfCountryRegion.select($"iso_3166_1", $"country_name").distinct()
     dfCountry.createdLog(dsName = "dfCountry")
@@ -33,6 +33,6 @@ class CountryRegionTransformer
     val dfRegion = dfCountryRegion.select($"iso_3166_1", $"iso_3166_2", $"region_name")
     dfRegion.createdLog(dsName = "dfRegion")
 
-    Map("tgt_country" -> dfCountry, "tgt_region" -> dfRegion)
+    Map("datamig_tgt_country" -> dfCountry, "datamig_tgt_region" -> dfRegion)
   }
 }

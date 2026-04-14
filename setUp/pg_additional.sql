@@ -132,7 +132,7 @@ AS $function$
   DECLARE
       schemeMin constant text = case cardinality(minSchema)
                                 when 0 then ''
-                                else chr(13)||'  schemaMin = "'||array_to_string (minSchema,', ')||'"'
+                                else chr(10)||'  schemaMin = "'||array_to_string (minSchema,', ')||'"'
                                 end ;
   BEGIN
     return tabSchema||'_'||tabname||' {
