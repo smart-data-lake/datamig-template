@@ -31,7 +31,7 @@ function help() {
     echo "    and corresponding table loaded. Other tables are not loaded."
     echo "    see config/actions.conf for all action names"
     echo
-    echo "-c: the data in MVweb will be checked and invalid data loaded into the error tables"
+    echo "-c: the data in the source will be checked and invalid data loaded into the error tables"
     echo "    the other tables will not be loaded"
     echo
     echo "-e <test/int> : name of environment to use; default: ${ENVIRONMENT}"

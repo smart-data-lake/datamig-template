@@ -35,7 +35,7 @@ xz -9v ${WORKDIR}/${BUNDLE_SRC_FILE}
 
 echo ""
 echo "Creating TARball ${BUNDLE_FILE}"
-tar -cf ${WORKDIR}/${BUNDLE_FILE} ${CONFIGDIR} ${WORKDIR}/*.jar ${WORKDIR}/README.md ${WORKDIR}/sql ${WORKDIR}/setUpLinuxVM.sh ${WORKDIR}/startSDLB.zsh
+tar -cf ${WORKDIR}/${BUNDLE_FILE} ${CONFIGDIR} ${WORKDIR}/*.jar ${WORKDIR}/README.md ${WORKDIR}/sql ${WORKDIR}/setUp ${WORKDIR}/setUpLinuxVM.sh ${WORKDIR}/startSDLB.zsh
 
 echo "Clean Up"
 rm -rvf ${WORKDIR}/sql ${WORKDIR}/setUpLinuxVM.sh ${WORKDIR}/startSDLB.zsh

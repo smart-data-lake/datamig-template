@@ -14,13 +14,13 @@ https://www.postgresql.org/docs/current/tutorial-createdb.html
 ```
 psql --dbname=postgres --username=postgres --command="create database sdlb"
 psql --dbname=sdlb --username=postgres --command="create user sdlb with password 'sdlb'; grant create on database sdlb to sdlb ;"
-psql --dbname=sdlb --username=sdlb --file=datamig_src.sql
-psql --dbname=sdlb --username=sdlb --file=datamig_tgt.sql
+psql --dbname=sdlb --username=sdlb --file=pg_datamig_src.sql
+psql --dbname=sdlb --username=sdlb --file=pg_datamig_tgt.sql
 psql --dbname=sdlb --username=postgres --command="vacuum analyze"
 ```
 ### Additional Gadgets
 The script `postgreAdditional.sql` contains statements to create function and views in schema `public` to monitor the size of database objects
 and a function to generate data objects for the Smart Datalake Builder which we will follow up soon.
 ```
-psql --dbname=sdlb --username=postgres --file=postgreAdditional.sql
+psql --dbname=sdlb --username=postgres --file=pg_additional.sql
 ```
