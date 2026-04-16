@@ -4,11 +4,13 @@
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <envs>
       <env name="SOURCE_DB" value="sdlb" />
+      <env name="SOURCE_DRIVER" value="org.postgresql.Driver" />
       <env name="SOURCE_HOST" value="localhost" />
       <env name="SOURCE_PORT" value="5432" />
       <env name="SOURCE_PW" value="sdlb" />
       <env name="SOURCE_USER" value="sdlb" />
       <env name="TARGET_DB" value="sdlb" />
+      <env name="TARGET_DRIVER" value="org.postgresql.Driver" />
       <env name="TARGET_HOST" value="localhost" />
       <env name="TARGET_PORT" value="5432" />
       <env name="TARGET_PW" value="sdlb" />
